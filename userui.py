@@ -38,9 +38,9 @@ class ERPSeparator:
         if self.saving_path:
             self.saving_label.config(text=f"선택한 폴더: {self.saving_path}")
     
-    def start_parser(self): #임시 코드
-        passer = processor()
-        processor.process_excel(passer, self.file_path, self.saving_path)
+    def start_parser(self): # 엑셀 파일 처리 시작
+        passer = processor(self.file_path, self.saving_path)
+        passer.process_excel()
 
 
 if __name__ == "__main__":
