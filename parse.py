@@ -23,7 +23,7 @@ class ExcelProcessor:
         
         
     def parse_file(self):
-        origin_data = pd.read_excel(self.reading_path)
+        origin_data = pd.read_excel(self.reading_path, dtype=str)
         origin_df = pd.DataFrame(origin_data)
         
         # 전송여부, 문서번호, 문서항번 컬럼 삭제
