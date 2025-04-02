@@ -39,23 +39,27 @@ class ERPSeparator:
         # 엑셀 파일 분리 시작 버튼
         self.start_button = tk.Button(root, text="엑셀 분리 시작", width=15, command=self.start_parser)
         self.start_button.grid(row=2, column=2, pady=20)
-
-
+        
+        self.result_label = tk.Label(root, text="")
+        self.result_label.grid(row=3, column=2, pady=10)
+        
     # 비용 처리를 위한 엑셀 파일 선택
     def select_excel_file(self):
         self.file_path = filedialog.askopenfilename(filetypes=[("Excel files", "*.xlsx *.xls")], title="엑셀 파일 선택")
         if self.file_path:
-            self.reading_label.config(text=self.file_path)
+            self.reading_label.config(text=self.file_path, anchor="w")
     
     # 계정코드 별 분리된 엑셀 파일 저장 경로 설정
     def select_saving_directory(self):
         self.saving_path = filedialog.askdirectory(title="엑셀 파일 저장할 폴더 선택")
         if self.saving_path:
-            self.saving_label.config(text=self.saving_path)
+            self.saving_label.config(text=self.saving_path, anchor="w")
     
-    def start_parser(self): # 엑셀 파일 처리 시작
+    # 엑셀 파일 처리 시작
+    def start_parser(self):
         passer = processor(self.file_path, self.saving_path)
-        passer.process_excel()
+        result = passer.process_excel()
+        self.result_label.config(text=result, justify="left")
 
 
 if __name__ == "__main__":

@@ -8,19 +8,22 @@ class ExcelProcessor:
         data = None
         
     def process_excel(self):
+        
         # 엑셀 파일의 앞에 3개의 열 삭제
         self.data = self.parse_file()
-        print("삭제 완")
+        info = "[결과]\n"
         
         # 존재하는 계정과목 확인
         account_nums = self.data['계정코드'].unique()
-        print('계정코드 종류: ', account_nums)
+        info += f'계정 과목 개수: {len(account_nums)}개\n총 비용 개수: {len(self.data)}건\n\n'
         
         # 파일을 저장할 위치 입력받기
         for account_num in account_nums:
             result = self.filter_by_account(account_num)
             self.save_file(result, f'{self.saving_path}/{account_num}_{date.today()}.xlsx') #계정과목_오늘날짜
+            info += f'{account_num} : {len(result)}건\n'
         
+        return info
         
     def parse_file(self):
         origin_data = pd.read_excel(self.reading_path, dtype=str)
