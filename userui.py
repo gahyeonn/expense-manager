@@ -9,6 +9,8 @@ class ERPSeparator:
         self.saving_path = None
         
         self.root.title("계정 과목별 엑셀 파일 분리기")
+        icon = tk.PhotoImage(file="icon.png")
+        self.root.iconphoto(True, icon)
         
         self.blank_left = tk.Label(root, text="", width=5,  height=4)
         self.blank_left.grid(row=0, column=0)
@@ -51,12 +53,16 @@ class ERPSeparator:
     
     # 계정코드 별 분리된 엑셀 파일 저장 경로 설정
     def select_saving_directory(self):
-        self.saving_path = filedialog.askdirectory(title="엑셀 파일 저장할 폴더 선택")
+        self.saving_path = filedialog.askdirectory(title="엑셀 파일 저장할 폴더 선택", initialdir=self.file_path)
         if self.saving_path:
             self.saving_label.config(text=self.saving_path, anchor="w")
     
     # 엑셀 파일 처리 시작
     def start_parser(self):
+        if not self.file_path or not self.saving_path:
+            self.result_label.config(text="엑셀 파일과 저장 경로를 모두 선택해 주세요.", justify="left")
+            return
+        
         passer = processor(self.file_path, self.saving_path)
         result = passer.process_excel()
         self.result_label.config(text=result, justify="left")
