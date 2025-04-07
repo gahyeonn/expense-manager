@@ -1,4 +1,5 @@
 import tkinter as tk
+import os
 from tkinter import filedialog
 from parse import ExcelProcessor as processor
 
@@ -9,8 +10,11 @@ class ERPSeparator:
         self.saving_path = None
         
         self.root.title("계정 과목별 엑셀 파일 분리기")
-        icon = tk.PhotoImage(file="icon.png")
-        self.root.iconphoto(True, icon)
+        path = os.path.join(os.path.dirname(__file__), 'icon.ico')
+        if os.path.isfile(path):
+            self.root.iconbitmap(path)
+        else:
+            self.root.iconbitmap('/icon.ico')
         
         self.blank_left = tk.Label(root, text="", width=5,  height=4)
         self.blank_left.grid(row=0, column=0)
