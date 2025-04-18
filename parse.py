@@ -24,13 +24,16 @@ class ExcelProcessor:
         
         # 파일을 저장할 위치 입력받기
         for account_num in account_nums:
-            result = self.filter_by_account(account_num)
+            allocated, non_allocated  = self.filter_by_account(account_num)
+            self.info += f'{account_num} : {len(allocated)}건\n'
             try:
-                self.save_file(result, f'{self.saving_path}/{account_num}_{date.today()}.xlsx') #계정과목_오늘날짜
+                self.save_file(allocated, f'{self.saving_path}/{account_num}_{date.today()}.xlsx') #계정과목_오늘날짜
+                if non_allocated:
+                    self.save_file(non_allocated, f'{self.saving_path}{account_num}_배정외_{date.today()}.xlsx')
+                    self.info += f'{account_num}_배정 외 : {len(non_allocated)}건\n'
             except:
                 self.info = "Error: 엑셀 파일 수정 권한 또는 수정 파일이 열려있는지 확인 후 다시 시도해 주세요.\n" 
                 return self.info
-            self.info += f'{account_num} : {len(result)}건\n'
         
         return self.info
         
@@ -46,7 +49,17 @@ class ExcelProcessor:
         
     # 계정 과목 분류 함수
     def filter_by_account(self, account_num):
-        return self.data[self.data['계정코드'] == account_num]
+        allocated = self.data[
+            (self.data['계정코드'] == account_num) &
+            (~self.data['적요'].str.contains('배정외|_인센', na=False))
+        ]
+        
+        non_allocated = self.data[
+            (self.data['계정코드'] == account_num) &
+            (self.data['적요'].str.contains('배정외|_인센', na=False))
+        ]
+        
+        return allocated, non_allocated
     
     
     # 계정 과목 기준으로 분류해서 파일 저장
