@@ -39,11 +39,15 @@ class ExcelProcessor:
         origin_df = pd.DataFrame(origin_data)
         
         # 전송여부, 문서번호, 문서항번 컬럼 삭제
-        return origin_df.drop(origin_df.columns[[0, 1, 2]], axis=1)
+        data = origin_df.drop(origin_df.columns[[0, 1, 2]], axis=1)
+        
+        # '적요'에 '취소'라는 단어가 포함된 데이터 삭제
+        return data[~data['적요'].str.contains('취소', na=False)]
         
     # 계정 과목 분류 함수
     def filter_by_account(self, account_num):
         return self.data[self.data['계정코드'] == account_num]
+    
     
     # 계정 과목 기준으로 분류해서 파일 저장
     def save_file(self, data, file_path):
