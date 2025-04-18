@@ -29,7 +29,7 @@ class ExcelProcessor:
             try:
                 self.save_file(allocated, f'{self.saving_path}/{account_num}_{date.today()}.xlsx') #계정과목_오늘날짜
                 if non_allocated:
-                    self.save_file(non_allocated, f'{self.saving_path}{account_num}_배정외_{date.today()}.xlsx')
+                    self.save_file(non_allocated, f'{self.saving_path}/{account_num}_배정외_{date.today()}.xlsx')
                     self.info += f'{account_num}_배정 외 : {len(non_allocated)}건\n'
             except:
                 self.info = "Error: 엑셀 파일 수정 권한 또는 수정 파일이 열려있는지 확인 후 다시 시도해 주세요.\n" 
