@@ -16,21 +16,25 @@ class ExcelProcessor:
             self.info += "Error: 비용 처리 파일 원본이 맞는지 확인 후 다시 시도해 주세요.\n"
             return self.info
         
-        self.info = "====결과====\n"
+        self.info = "========결과========\n"
         
         # 존재하는 계정과목 확인
         account_nums = self.data['계정코드'].unique()
-        self.info += f'계정 과목 개수: {len(account_nums)}개\n총 비용 개수: {len(self.data)}건\n\n'
+        self.info += f'계정 과목 개수: {len(account_nums)}개\n총 비용 데이터터 개수: {len(self.data)}건\n\n'
         
         # 파일을 저장할 위치 입력받기
         for account_num in account_nums:
             allocated, non_allocated  = self.filter_by_account(account_num)
-            self.info += f'{account_num} : {len(allocated)}건\n'
+            
             try:
-                self.save_file(allocated, f'{self.saving_path}/{account_num}_{date.today()}.xlsx') #계정과목_오늘날짜
-                if non_allocated:
+                if not allocated.empty:
+                    self.save_file(allocated, f'{self.saving_path}/{account_num}_{date.today()}.xlsx') #계정과목_오늘날짜
+                    self.info += f'{account_num}           : {len(allocated)}건\n'
+
+                if not non_allocated.empty:
                     self.save_file(non_allocated, f'{self.saving_path}/{account_num}_배정외_{date.today()}.xlsx')
-                    self.info += f'{account_num}_배정 외 : {len(non_allocated)}건\n'
+                    self.info += f'{account_num}_배정외 : {len(non_allocated)}건\n'
+            
             except:
                 self.info = "Error: 엑셀 파일 수정 권한 또는 수정 파일이 열려있는지 확인 후 다시 시도해 주세요.\n" 
                 return self.info
@@ -49,15 +53,12 @@ class ExcelProcessor:
         
     # 계정 과목 분류 함수
     def filter_by_account(self, account_num):
-        allocated = self.data[
-            (self.data['계정코드'] == account_num) &
-            (~self.data['적요'].str.contains('배정외|_인센', na=False))
-        ]
+        base = self.data[self.data['계정코드'] == account_num]
         
-        non_allocated = self.data[
-            (self.data['계정코드'] == account_num) &
-            (self.data['적요'].str.contains('배정외|_인센', na=False))
-        ]
+        allocated = base[~base['적요'].str.contains('배정외 | 인센', na=False)]
+        
+        # '적요'에 '배정외' 또는 '인센'이라는 단어가 포함된 데이터 추출
+        non_allocated = base[base['적요'].str.contains('배정외 | 인센', na=False)]
         
         return allocated, non_allocated
     
@@ -65,5 +66,3 @@ class ExcelProcessor:
     # 계정 과목 기준으로 분류해서 파일 저장
     def save_file(self, data, file_path):
         data.to_excel(file_path, index=False)
-
-    
