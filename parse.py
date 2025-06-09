@@ -55,10 +55,10 @@ class ExcelProcessor:
     def filter_by_account(self, account_num):
         base = self.data[self.data['계정코드'] == account_num]
         
-        allocated = base[~base['적요'].str.contains('배정외 | 인센', na=False)]
+        allocated = base[~base['적요'].str.contains('배정외|인센', na=False)]
         
         # '적요'에 '배정외' 또는 '인센'이라는 단어가 포함된 데이터 추출
-        non_allocated = base[base['적요'].str.contains('배정외 | 인센', na=False)]
+        non_allocated = base[base['적요'].str.contains('배정외|인센', na=False)]
         
         return allocated, non_allocated
     
